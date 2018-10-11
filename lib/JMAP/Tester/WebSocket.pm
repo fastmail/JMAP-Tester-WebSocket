@@ -2,10 +2,11 @@ use v5.10.0;
 use warnings;
 
 package JMAP::Tester::WebSocket;
+# ABSTRACT: a WebSocket JMAP client made for testing JMAP servers
 
 use Moo;
 use IO::Async::Loop;
-use Net::Async::WebSocket::Client;
+use Net::Async::WebSocket::Client 0.13;
 use Protocol::WebSocket::Request;
 use Params::Util qw(_HASH0 _ARRAY0);
 use Data::Dumper;
