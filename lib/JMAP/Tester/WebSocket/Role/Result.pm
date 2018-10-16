@@ -24,6 +24,20 @@ has ws_response => (
   is => 'ro',
 );
 
+=method response_payload
+
+Returns the raw payload of the response, if there is one. Empty string
+otherwise. Mostly this will be C<< $self->ws_response >>
+but other result types may exist that don't have a ws_response...
+
+=cut
+
+sub response_payload {
+  my ($self) = @_;
+
+  return $self->ws_response || '';
+}
+
 =method assert_successful
 
 This method returns the result if it's a success and otherwise aborts.
