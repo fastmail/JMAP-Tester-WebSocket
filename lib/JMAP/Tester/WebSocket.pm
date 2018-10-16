@@ -136,6 +136,10 @@ sub connect_ws {
     },
   );
 
+  $client->{framebuffer} = Protocol::WebSocket::Frame->new(
+    max_payload_size => 0
+  );
+
   $self->loop->add($client);
 
   $client->connect(
