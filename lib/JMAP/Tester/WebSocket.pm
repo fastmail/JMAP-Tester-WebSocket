@@ -18,6 +18,23 @@ use JMAP::Tester::WebSocket::Result::Failure;
 
 extends qw(JMAP::Tester);
 
+has +json_codec => (
+  is => 'bare',
+  handles => {
+    json_encode => 'encode',
+    json_decode => 'decode',
+  },
+  default => sub {
+    require JSON;
+
+    # Not ->utf8-> or we die decoding things with "wide character"...
+    # Maybe to be fixed in Protocol::WebSocket? Or IO::Async is doing this
+    # for us?
+    return JSON->new->convert_blessed;
+  },
+);
+
+
 has 'ws_api_uri' => (
   is        => 'rw',
   required  => 1,
@@ -147,14 +164,15 @@ sub _jresponse_from_wsresponse {
   my ($data, $error);
 
   try {
-    $data = $self->apply_json_types( $self->json_decode( $ws_res ) );
+    $data = $self->apply_json_types($self->json_decode( $ws_res ));
   } catch {
-    $error = 1;
+    $error = $_;
   };
 
-  if ($error) {
+  if (defined $error) {
     return JMAP::Tester::WebSocket::Result::Failure->new(
       ws_response => $ws_res,
+      ident => $error,
     );
   }
 
