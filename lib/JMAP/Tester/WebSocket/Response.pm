@@ -5,7 +5,7 @@ package JMAP::Tester::WebSocket::Response;
 # ABSTRACT: what you get in reply to a succesful JMAP request
 
 use Moo;
-with 'JMAP::Tester::Role::SentenceCollection', 'JMAP::Tester::WebSocket::Role::Result';
+with 'JMAP::Tester::Role::SentenceCollection', 'JMAP::Tester::WebSocket::Role::WebSocketResult';
 
 use JMAP::Tester::Response::Sentence;
 use JMAP::Tester::Response::Paragraph;

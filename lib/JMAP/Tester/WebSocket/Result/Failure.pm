@@ -5,7 +5,7 @@ package JMAP::Tester::WebSocket::Result::Failure;
 # ABSTRACT: what you get when your JMAP request utterly fails
 
 use Moo;
-with 'JMAP::Tester::WebSocket::Role::Result';
+with 'JMAP::Tester::WebSocket::Role::WebSocketResult';
 
 use namespace::clean;
 
