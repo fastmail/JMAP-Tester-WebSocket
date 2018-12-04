@@ -199,3 +199,29 @@ sub _jresponse_from_wsresponse {
 }
 
 1;
+__END__
+
+=head1 SYNOPSIS
+
+  use JMAP::Tester::WebSocket;
+
+  my $jtest = JMAP::Tester::WebSocket->new({
+    ws_uri => 'ws://jmap.local/account/123',
+  });
+
+  my $response = $jtest->request([
+    [ getMailboxes => {} ],
+    [ getMessageUpdates => { sinceState => "123" } ],
+  ]);
+
+=head1 DESCRIPTION
+
+This module provides a WebSockets wrapper around L<JMAP::Tester>.
+
+See L<JMAP::Tester> for more information.
+
+=head1 SEE ALSO
+
+L<JMAP::Tester> - a JMAP client made for testing JMAP servers
+
+=cut
