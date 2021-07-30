@@ -106,6 +106,13 @@ sub request {
   $request = $request->{methodCalls}
     if $ENV{JMAP_TESTER_NO_WRAPPER} && _ARRAY0($input_request);
 
+  if ($self->_has_default_using && ! exists $request->{using}) {
+    $request->{using} = $self->default_using;
+  }
+
+  # Required by RFC 8887
+  $request->{'@type'} = 'Request';
+
   my $json = $self->json_encode($request);
 
   my $client = $self->_cached_client || $self->connect_ws;
