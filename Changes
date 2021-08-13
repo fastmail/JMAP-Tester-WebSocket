@@ -2,6 +2,11 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+        - Require JMAP::Tester@0.101 which fixes compilation with
+          certain versions of Role::Tiny
+
+0.002     2021-08-11 13:00:27-04:00 America/New_York
+
         - Update to work with JMAP::Tester 0.100
         - Fixes to work with cyrus changes
 
