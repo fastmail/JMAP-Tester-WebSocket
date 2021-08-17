@@ -2,6 +2,11 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+        - work around bugs in older Role::Tiny; this is what you want if you
+          saw: Can't use string ("-1") as a symbol ref
+
+0.003     2021-08-16 08:16:37-04:00 America/New_York
+
         - Require JMAP::Tester@0.101 which fixes compilation with
           certain versions of Role::Tiny
 
