@@ -213,7 +213,7 @@ __END__
   use JMAP::Tester::WebSocket;
 
   my $jtest = JMAP::Tester::WebSocket->new({
-    ws_uri => 'ws://jmap.local/account/123',
+    ws_api_uri => 'ws://jmap.local/account/123',
   });
 
   my $response = $jtest->request([
