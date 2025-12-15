@@ -6,6 +6,7 @@ package JMAP::Tester::WebSocket;
 
 use Moo;
 use IO::Async::Loop;
+use IO::Async::Timer::Countdown;
 use Net::Async::WebSocket::Client 0.13;
 use Protocol::WebSocket::Request;
 use Params::Util qw(_HASH0 _ARRAY0);
@@ -34,6 +35,10 @@ has +json_codec => (
   },
 );
 
+has 'timeout' => (
+  is => 'rw',
+  default => 30,
+);
 
 has 'ws_api_uri' => (
   is        => 'rw',
@@ -119,7 +124,25 @@ sub request {
 
   $client->send_text_frame($json);
 
+  my $watchdog = IO::Async::Timer::Countdown->new(
+    delay => $self->timeout,
+    remove_on_expire => 1,
+    on_expire => sub {
+      my $seconds = $self->timeout;
+
+      require Carp;
+      Carp::confess(
+        "JMAP::Tester::WebSocket->request() timed out after $seconds seconds"
+      );
+    },
+  )->start;
+
+  $self->loop->add($watchdog);
+
   my $res = $self->loop->run;
+
+  $watchdog->stop;
+  $self->loop->remove($watchdog);
 
   unless ($self->_cached_client) {
     $self->loop->remove($client);
@@ -149,6 +172,21 @@ sub connect_ws {
 
   $self->loop->add($client);
 
+  my $watchdog = IO::Async::Timer::Countdown->new(
+    delay => $self->timeout,
+    remove_on_expire => 1,
+    on_expire => sub {
+      my $seconds = $self->timeout;
+
+      require Carp;
+      Carp::confess(
+        "JMAP::Tester::WebSocket->connect_ws() timed out after $seconds seconds"
+      );
+    },
+  )->start;
+
+  $self->loop->add($watchdog);
+
   $client->connect(
     url => $self->ws_api_uri,
     req => Protocol::WebSocket::Request->new(
@@ -161,6 +199,9 @@ sub connect_ws {
       subprotocol => 'jmap',
     ),
   )->get;
+
+  $watchdog->stop;
+  $self->loop->remove($watchdog);
 
   if ($self->cache_connection) {
     $self->_cached_client($client);
