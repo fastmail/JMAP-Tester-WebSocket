@@ -19,6 +19,19 @@ use JMAP::Tester::WebSocket::Result::Failure;
 
 extends qw(JMAP::Tester);
 
+{
+  package
+    JMAP::Tester::WebSocket::LogEvent;
+
+  use Moo;
+
+  has as_string => (
+    init_arg => 'payload',
+    required => 1,
+    is => 'ro',
+  );
+}
+
 has +json_codec => (
   is => 'bare',
   handles => {
@@ -122,6 +135,10 @@ sub request {
 
   my $client = $self->_cached_client || $self->connect_ws;
 
+  $self->_logger->log_jmap_request($self, {
+    http_request => JMAP::Tester::WebSocket::LogEvent->new({ payload => $json }),
+  });
+
   $client->send_text_frame($json);
 
   my $watchdog = IO::Async::Timer::Countdown->new(
@@ -147,6 +164,10 @@ sub request {
   unless ($self->_cached_client) {
     $self->loop->remove($client);
   }
+
+  $self->_logger->log_jmap_response($self, {
+    http_response => JMAP::Tester::WebSocket::LogEvent->new({ payload => $res }),
+  });
 
   return $self->_jresponse_from_wsresponse($res);
 }
@@ -254,7 +275,7 @@ __END__
   use JMAP::Tester::WebSocket;
 
   my $jtest = JMAP::Tester::WebSocket->new({
-    ws_uri => 'ws://jmap.local/account/123',
+    ws_api_uri => 'ws://jmap.local/account/123',
   });
 
   my $response = $jtest->request([
