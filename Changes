@@ -2,6 +2,8 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.006     2026-06-18 15:59:36-04:00 America/New_York
+
         - Require (and cope with) JMAP::Tester@0.110 which provides diagnostic
           dumpering and an abort method to all result types
 
